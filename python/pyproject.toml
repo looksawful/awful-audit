@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "awful-audit"
-version = "0.1.0"
+version = "0.1.0b1"
 description = "Project audit tools for static front-end repositories."
 readme = { text = "Project audit tools for static front-end repositories.", content-type = "text/markdown" }
 requires-python = ">=3.10"

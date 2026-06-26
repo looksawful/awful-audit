@@ -1,178 +1,140 @@
 # awful-audit
 
-Project audit tools for static front-end repositories.
+Small audit tool for static front-end projects.
 
-Awful Audit scans a project folder and collects code, assets, CSS usage, Git state and build output into copy-ready reports.
+Awful Audit reads a project folder and builds plain text reports for code review, cleanup and AI-assisted analysis.
 
-The repository contains two implementations:
+Beta: it works, but report formats and installers may still change.
 
-* `powershell/` — Windows PowerShell version with the `au` command
-* `python/` — cross-platform Python version with CLI and Tkinter GUI
+## Versions
 
-## Features
+* powershell/ — Windows version with the au command
+* python/ — cross-platform CLI and a simple Tkinter GUI
 
-* Full source audit
-* Asset map
-* CSS usage report
-* HTML-only report
-* JavaScript and TypeScript report
-* Final CSS report from `dist`
-* Build output and large asset report from `dist`
-* Combined report mode
-* Clipboard output
-* Optional file output in the Python version
-* Optional GUI in the Python version
+## What it scans
 
-## Audit modes
+* source code
+* Git state
+* file inventory
+* assets and their references
+* CSS imports, URLs and class mentions
+* JavaScript and TypeScript imports
+* final CSS from dist
+* built files and large assets from dist
 
-| Mode      | Purpose                                      |
-| --------- | -------------------------------------------- |
-| `all`     | run all reports in order                     |
-| `full`    | collect code, Git state and file inventory   |
-| `assets`  | collect asset paths, sizes and references    |
-| `css`     | collect CSS, imports, URLs and class mentions |
-| `html`    | collect HTML files                           |
-| `js`      | collect JavaScript and TypeScript files      |
-| `cssdist` | collect source CSS and final CSS from `dist` |
-| `dist`    | analyze built files, sizes and references    |
+## Modes
+
+| Mode | What it does |
+| --- | --- |
+| all | runs all reports in order |
+| full | collects code, Git state and file inventory |
+| assets | collects asset paths, sizes and references |
+| css | collects CSS, imports, URLs and class mentions |
+| html | collects HTML files |
+| js | collects JavaScript and TypeScript files |
+| cssdist | collects source CSS and final CSS from dist |
+| dist | checks built files, sizes and references |
 
 ## PowerShell
 
 Install from the repository root:
 
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\install.ps1
-```
+    pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\install.ps1
 
 Run from any project folder:
 
-```powershell
-au
-au all
-au full
-au assets
-au css
-au html
-au js
-au cssdist
-au dist
-```
+    au
+    au all
+    au full
+    au assets
+    au css
+    au html
+    au js
+    au cssdist
+    au dist
 
 Run without installing:
 
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\scripts\au.ps1 all
-```
+    pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\scripts\au.ps1 all
 
 Uninstall:
 
-```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\uninstall.ps1
-```
+    pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\uninstall.ps1
 
 ## Python
 
 Install from source:
 
-```bash
-cd python
-python -m venv .venv
-python -m pip install --upgrade pip build
-python -m pip install -e .
-```
+    cd python
+    python -m venv .venv
+    python -m pip install --upgrade pip build
+    python -m pip install -e .
 
 Run from a project folder:
 
-```bash
-awful-audit
-awful-audit all
-awful-audit full
-awful-audit assets
-awful-audit css
-awful-audit html
-awful-audit js
-awful-audit cssdist
-awful-audit dist
-```
+    awful-audit
+    awful-audit all
+    awful-audit full
+    awful-audit assets
+    awful-audit css
+    awful-audit html
+    awful-audit js
+    awful-audit cssdist
+    awful-audit dist
 
-Run against another folder:
+Run another folder:
 
-```bash
-awful-audit all --root path/to/project
-```
+    awful-audit all --root path/to/project
 
-Save report to a file:
+Save to file:
 
-```bash
-awful-audit all --output audit.txt
-```
+    awful-audit all --output audit.txt
 
-Disable clipboard output:
+Do not use clipboard:
 
-```bash
-awful-audit all --no-clipboard
-```
+    awful-audit all --no-clipboard
 
 Open GUI:
 
-```bash
-awful-audit gui
-awful-audit gui --root path/to/project
-```
+    awful-audit gui
+    awful-audit gui --root path/to/project
 
 ## Python options
 
-| Option             | Purpose                                  |
-| ------------------ | ---------------------------------------- |
-| `--root PATH`      | project folder to scan                   |
-| `--output FILE`    | save report to a file                    |
-| `--no-clipboard`   | do not copy report to clipboard          |
-| `--help`           | show help                                |
+| Option | Meaning |
+| --- | --- |
+| --root PATH | folder to scan |
+| --output FILE | save report to file |
+| --no-clipboard | do not copy report to clipboard |
+| --help | show help |
 
 ## Skipped folders
 
-Source audits skip generated and dependency folders:
+Source reports skip:
 
-* `.git`
-* `node_modules`
-* `dist`
-* `build`
-* `.next`
-* `.vite`
-* `coverage`
-* `tmp`
-* `temp`
-* `.vercel`
-* `.wrangler`
+* .git
+* node_modules
+* dist
+* build
+* .next
+* .vite
+* coverage
+* tmp
+* temp
+* .vercel
+* .wrangler
 
-`dist` is scanned only by `dist` and `cssdist`.
-
-## Files
-
-| Path            | Purpose                    |
-| --------------- | -------------------------- |
-| `powershell/`   | PowerShell implementation  |
-| `python/`       | Python implementation      |
-| `README.md`     | project documentation      |
-| `LICENSE`       | MIT license                |
+dist is scanned only by dist and cssdist.
 
 ## Requirements
 
-PowerShell version:
+PowerShell version: Windows, PowerShell 7+.
 
-* Windows
-* PowerShell 7+
+Python version: Python 3.10+, Tkinter for GUI mode.
 
-Python version:
+## License
 
-* Python 3.10+
-* Tkinter for GUI mode
-
-## License and rights
-
-Source code is licensed under the MIT License.
-
-The Awful Audit name, visual identity and branding assets are copyright Ivan Krushinsky and are not licensed for reuse as branding assets.
+MIT.
 
 ## Author
 
