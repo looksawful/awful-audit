@@ -1,5 +1,7 @@
 # awful-audit
 
+[Website](https://looksawful.github.io/awful-audit/) · [Download ZIP](https://github.com/looksawful/awful-audit/archive/refs/heads/main.zip) · [looksawful.ru](https://looksawful.ru)
+
 Small audit tool for static front-end projects.
 
 Awful Audit reads a project folder and builds plain text reports for code review, cleanup and AI-assisted analysis.
@@ -141,3 +143,4 @@ MIT.
 Ivan Krushinsky / looksawful
 
 https://looksawful.ru
+
