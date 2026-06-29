@@ -1,222 +1,499 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1" name="viewport" />
-    <title>Awful Audit</title>
-    <meta content="Small audit tool for static front-end projects." name="description" />
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-    <style>
-      :root {
-        --page: min(100% - 40px, 760px);
-        --black: #000;
-        --white: #fff;
-        --muted: rgba(0, 0, 0, 0.58);
-        --fill: #f6f8fa;
-        --line: 1px solid #000;
-        --line-soft: 1px solid rgba(0, 0, 0, 0.12);
-        --radius: 12px;
-        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      }
-      *, *::before, *::after { box-sizing: border-box; }
-      html {
-        background: var(--white);
-        color: var(--black);
-        font-family: "Rubik", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        text-size-adjust: 100%;
-      }
-      body { margin: 0; min-width: 320px; background: var(--white); }
-      a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
-      h1, h2, p, ul, pre { margin: 0; }
-      ul { padding-left: 1.1rem; }
-      li { margin: 0.32rem 0; }
-      svg { width: 16px; height: 16px; flex: 0 0 auto; fill: currentColor; }
-      code { font-family: var(--mono); }
-      .page { width: var(--page); margin: 0 auto; padding: clamp(48px, 8vw, 84px) 0; }
-      .doc { display: grid; gap: clamp(26px, 4.6vw, 44px); }
-      .intro { display: grid; gap: 17px; }
-      h1 {
-        max-width: 12ch;
-        font-size: clamp(42px, 7vw, 68px);
-        line-height: 0.99;
-        letter-spacing: -0.052em;
-        font-weight: 700;
-      }
-      h2 {
-        font-size: clamp(20px, 2.8vw, 26px);
-        line-height: 1.1;
-        letter-spacing: -0.032em;
-        font-weight: 700;
-      }
-      p, li { font-size: 16px; line-height: 1.58; }
-      .lead { max-width: 620px; font-size: clamp(18px, 2.3vw, 21px); line-height: 1.42; }
-      .links { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
-      .links a {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        min-height: 32px;
-        padding: 6px 10px 7px;
-        border: var(--line);
-        border-radius: 999px;
-        color: var(--black);
-        font-size: 13px;
-        line-height: 1;
-        text-decoration: none;
-      }
-      .links a:hover, .links a:focus-visible { background: var(--black); color: var(--white); outline: 0; }
-      .block { display: grid; gap: 14px; }
-      .block > p { color: var(--muted); }
-      .code {
-        position: relative;
-        overflow: hidden;
-        border: var(--line-soft);
-        border-radius: var(--radius);
-        background: var(--fill);
-      }
-      .code pre {
-        overflow: auto;
-        padding: 42px 16px 16px;
-        background: var(--fill);
-        font-family: var(--mono);
-        font-size: 13px;
-        line-height: 1.62;
-        white-space: pre;
-      }
-      .code code { font-family: inherit; }
-      .copy {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        min-height: 26px;
-        padding: 4px 8px 5px;
-        border: var(--line-soft);
-        border-radius: 999px;
-        background: var(--white);
-        color: var(--black);
-        font-family: var(--mono);
-        font-size: 11px;
-        line-height: 1;
-        cursor: pointer;
-      }
-      .copy svg { width: 13px; height: 13px; }
-      .copy:hover, .copy:focus-visible, .copy.is-copied { background: var(--black); color: var(--white); outline: 0; }
-      .footer {
-        display: grid;
-        gap: 14px;
-        padding-top: clamp(22px, 4vw, 34px);
-        border-top: var(--line-soft);
-        color: var(--muted);
-      }
-      .footer p { font-size: 13px; line-height: 1.45; }
-      .footer .links a { border-color: rgba(0, 0, 0, 0.24); color: var(--black); }
-      @media (max-width: 560px) {
-        :root { --page: min(100% - 32px, 760px); }
-        .page { padding-top: 36px; }
-        h1 { font-size: clamp(40px, 17vw, 60px); }
-        .links { gap: 6px; }
-        .links a { min-height: 30px; padding-inline: 9px; }
-        .code pre { font-size: 12px; }
-      }
-    </style>
-  </head>
-  <body>
-    <main class="page">
-      <article class="doc">
-        <section class="intro" aria-labelledby="title">
-          <h1 id="title">Awful Audit</h1>
-          <p class="lead">Small audit tool for static front-end projects.</p>
-          <ul class="links" aria-label="Primary project links">
-            <li><a href="https://github.com/looksawful/awful-audit"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.25.49-2.72-1.08-2.72-1.08-.36-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.8-.2-3.69-.9-3.69-3.99 0-.88.31-1.6.83-2.16-.08-.2-.36-1.02.08-2.13 0 0 .68-.22 2.22.82A7.7 7.7 0 0 1 8 3.84c.69 0 1.38.09 2.02.27 1.54-1.04 2.22-.82 2.22-.82.44 1.11.16 1.93.08 2.13.52.56.83 1.28.83 2.16 0 3.1-1.89 3.79-3.69 3.99.29.25.55.74.55 1.5v2.22c0 .21.14.46.55.38A8 8 0 0 0 8 0Z"/></svg><span>GitHub</span></a></li>
-          </ul>
-        </section>
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<title>Awful Audit</title>
+<meta content="Small audit tool for static front-end projects." name="description">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-        <section class="block">
-          <ul>
-            <li>Builds plain text reports for code review, cleanup and AI-assisted analysis</li>
-            <li>Scans source code, Git state, file inventory, assets, imports and class mentions</li>
-            <li>Includes PowerShell and Python versions</li>
-            <li>Supports all, full, assets, css, html, js, cssdist and dist modes</li>
-          </ul>
-        </section>
+:root {
+  --blue-0: #00005f;
+  --blue-1: #00008f;
+  --blue-2: #0000a8;
+  --blue-3: #0033df;
+  --cyan-0: #00aaaa;
+  --cyan-1: #00d7ff;
+  --cyan-2: #55ffff;
+  --white: #ffffff;
+  --yellow: #ffff55;
+  --black: #000000;
+  --red: #ff5555;
+  --shadow: #000033;
+  --font: "VT323", monospace;
+  --page-pad: clamp(10px, 2vw, 24px);
+  --gap: clamp(10px, 1.45vw, 18px);
+  --border: 2px;
+}
 
-        <section class="block" aria-labelledby="install">
-          <h2 id="install">Install</h2>
-          <ul class="links" aria-label="Install links">
-            <li><a href="https://github.com/looksawful/awful-audit/archive/refs/heads/main.zip"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M7.47 10.78a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 0 0-1.06-1.06L8.75 8.44V1.75a.75.75 0 0 0-1.5 0v6.69L5.28 6.47a.75.75 0 0 0-1.06 1.06l3.25 3.25ZM3.75 13a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z"/></svg><span>Download ZIP</span></a></li>
-          </ul>
-          <div class="code">
-  <button class="copy" type="button" data-copy-target="install-code" aria-label="Copy code"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 6.75C0 5.78.78 5 1.75 5h7.5c.97 0 1.75.78 1.75 1.75v7.5c0 .97-.78 1.75-1.75 1.75h-7.5C.78 16 0 15.22 0 14.25v-7.5ZM1.75 6.5a.25.25 0 0 0-.25.25v7.5c0 .14.11.25.25.25h7.5c.14 0 .25-.11.25-.25v-7.5a.25.25 0 0 0-.25-.25h-7.5ZM5 1.75C5 .78 5.78 0 6.75 0h7.5C15.22 0 16 .78 16 1.75v7.5c0 .97-.78 1.75-1.75 1.75H13.5V9.5h.75c.14 0 .25-.11.25-.25v-7.5a.25.25 0 0 0-.25-.25h-7.5a.25.25 0 0 0-.25.25V2.5H5v-.75Z"/></svg><span>copy</span></button>
-  <pre><code id="install-code">pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\install.ps1
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-cd python
-python -m venv .venv
-python -m pip install --upgrade pip
-python -m pip install -e .</code></pre>
-</div>
-        </section>
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--blue-1);
+  color: var(--white);
+  font-family: var(--font);
+  font-size: clamp(18px, 1.45vw, 22px);
+  line-height: 1;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
+  text-rendering: geometricPrecision;
+  text-size-adjust: 100%;
+}
 
-        <section class="block" aria-labelledby="usage">
-          <h2 id="usage">Usage</h2>
-          <p>Run from any project folder.</p>
-          <div class="code">
-  <button class="copy" type="button" data-copy-target="usage-code" aria-label="Copy code"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 6.75C0 5.78.78 5 1.75 5h7.5c.97 0 1.75.78 1.75 1.75v7.5c0 .97-.78 1.75-1.75 1.75h-7.5C.78 16 0 15.22 0 14.25v-7.5ZM1.75 6.5a.25.25 0 0 0-.25.25v7.5c0 .14.11.25.25.25h7.5c.14 0 .25-.11.25-.25v-7.5a.25.25 0 0 0-.25-.25h-7.5ZM5 1.75C5 .78 5.78 0 6.75 0h7.5C15.22 0 16 .78 16 1.75v7.5c0 .97-.78 1.75-1.75 1.75H13.5V9.5h.75c.14 0 .25-.11.25-.25v-7.5a.25.25 0 0 0-.25-.25h-7.5a.25.25 0 0 0-.25.25V2.5H5v-.75Z"/></svg><span>copy</span></button>
-  <pre><code id="usage-code">au
-au all
-au full
-au assets
-au css
-au html
-au js
-au cssdist
-au dist
+html,
+body,
+button,
+input,
+textarea,
+select,
+code,
+pre,
+a,
+span,
+p,
+h1 {
+  font-family: var(--font) !important;
+  font-weight: 400 !important;
+}
 
-awful-audit all --root path/to/project
-awful-audit all --output audit.txt
-awful-audit all --no-clipboard</code></pre>
-</div>
-        </section>
+body {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+  background: var(--blue-1);
+  color: var(--white);
+}
 
-        <footer class="footer">
-          <ul class="links" aria-label="Secondary project links">
-            <li><a href="https://github.com/looksawful/awful-audit/blob/main/README.md"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.5A2.75 2.75 0 0 1 8 3.75 2.75 2.75 0 0 1 10.75 1h4.5a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.5a1.25 1.25 0 0 0-1.25 1.25.75.75 0 0 1-1.5 0A1.25 1.25 0 0 0 6.75 13H.75a.75.75 0 0 1-.75-.75V1.75Zm1.5.75v9h5.25c.47 0 .9.12 1.25.34V3.75c0-.69-.56-1.25-1.25-1.25H1.5Zm7 9.34c.36-.22.78-.34 1.25-.34h4.75v-9h-3.75c-.69 0-1.25.56-1.25 1.25v8.09Z"/></svg><span>README</span></a></li>
-            <li><a href="https://github.com/looksawful/awful-audit/blob/main/LICENSE"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8.75.75a.75.75 0 0 0-1.5 0V2h-5a.75.75 0 0 0 0 1.5h.52L.04 8.65a.75.75 0 0 0-.04.35C0 10.66 1.34 12 3 12s3-1.34 3-3a.75.75 0 0 0-.04-.25L3.18 3.5h4.07v10H5.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-1.5v-10h4.07l-2.78 5.25A.75.75 0 0 0 10 9c0 1.66 1.34 3 3 3s3-1.34 3-3a.75.75 0 0 0-.04-.25L13.23 3.5h.52a.75.75 0 0 0 0-1.5h-5V.75ZM1.7 8.25 3 5.8l1.3 2.45H1.7Zm10 0L13 5.8l1.3 2.45h-2.6Z"/></svg><span>License</span></a></li>
-            <li><a href="https://github.com/looksawful"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.25.49-2.72-1.08-2.72-1.08-.36-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.8-.2-3.69-.9-3.69-3.99 0-.88.31-1.6.83-2.16-.08-.2-.36-1.02.08-2.13 0 0 .68-.22 2.22.82A7.7 7.7 0 0 1 8 3.84c.69 0 1.38.09 2.02.27 1.54-1.04 2.22-.82 2.22-.82.44 1.11.16 1.93.08 2.13.52.56.83 1.28.83 2.16 0 3.1-1.89 3.79-3.69 3.99.29.25.55.74.55 1.5v2.22c0 .21.14.46.55.38A8 8 0 0 0 8 0Z"/></svg><span>@looksawful</span></a></li>
-            <li><a href="https://looksawful.ru"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM5.78 1.74A6.51 6.51 0 0 0 4.44 5H2.38a6.53 6.53 0 0 1 3.4-3.26ZM1.5 8c0-.52.06-1.02.18-1.5h2.55a11.15 11.15 0 0 0 0 3H1.68A6.56 6.56 0 0 1 1.5 8Zm.88 3h2.06c.28 1.32.76 2.46 1.34 3.26A6.53 6.53 0 0 1 2.38 11ZM7.25 14.5c-.43-.35-1.03-1.55-1.35-3.5h1.35v3.5Zm0-5H5.7a9.7 9.7 0 0 1 0-3h1.55v3Zm0-4H5.9C6.22 3.55 6.82 2.35 7.25 2v3.5Zm6.37-.5h-2.06a8.71 8.71 0 0 0-1.34-3.26A6.53 6.53 0 0 1 13.62 5ZM8.75 2c.43.35 1.03 1.55 1.35 3.5H8.75V2Zm0 4.5h1.55a9.7 9.7 0 0 1 0 3H8.75v-3Zm0 8V11h1.35c-.32 1.95-.92 3.15-1.35 3.5Zm1.47-.24A8.71 8.71 0 0 0 11.56 11h2.06a6.53 6.53 0 0 1-3.4 3.26Zm1.55-4.76a11.15 11.15 0 0 0 0-3h2.55a6.55 6.55 0 0 1 0 3h-2.55Z"/></svg><span>looksawful.ru</span></a></li>
-          </ul>
-          <p>MIT. Ivan Krushinsky / looksawful.</p>
-        </footer>
-      </article>
-    </main>
-    <script>
-      document.querySelectorAll("[data-copy-target]").forEach((button) => {
-        button.addEventListener("click", async () => {
-          const target = document.getElementById(button.dataset.copyTarget);
-          if (!target) return;
-          try {
-            await navigator.clipboard.writeText(target.textContent.trim());
-            button.classList.add("is-copied");
-            const label = button.querySelector("span");
-            const oldText = label ? label.textContent : "copy";
-            if (label) label.textContent = "copied";
-            window.setTimeout(() => {
-              button.classList.remove("is-copied");
-              if (label) label.textContent = oldText;
-            }, 1000);
-          } catch {
-            const range = document.createRange();
-            range.selectNodeContents(target);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-          }
-        });
-      });
-    </script>
-  </body>
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+p,
+ul,
+pre {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+code,
+pre {
+  font: inherit;
+}
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--page-pad) var(--page-pad) 5.5rem;
+}
+
+.screen {
+  position: relative;
+  min-height: calc(100vh - (var(--page-pad) * 2));
+  background: var(--blue-2);
+}
+
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,.05) 0,
+    rgba(255,255,255,.05) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: .2;
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--gap);
+}
+
+.titlebar,
+.panel,
+.block {
+  border: var(--border) solid var(--cyan-1);
+  background: var(--blue-2);
+  box-shadow: clamp(5px, .85vw, 9px) clamp(5px, .85vw, 9px) 0 var(--shadow);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  min-height: clamp(46px, 5vw, 64px);
+  background: var(--blue-3);
+}
+
+.titlebar h1 {
+  min-width: 0;
+  padding: clamp(10px, 1.3vw, 16px);
+  color: var(--yellow);
+  font-size: clamp(34px, 4.2vw, 64px);
+  line-height: .95;
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+
+.top-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+
+.panel,
+.block {
+  min-width: 0;
+}
+
+.info-body {
+  display: grid;
+  gap: clamp(10px, 1.2vw, 16px);
+  padding: .4rem;
+}
+
+.lead {
+  max-width: 72ch;
+  color: var(--white);
+  font-size: clamp(20px, 2vw, 30px);
+  line-height: 1.25;
+}
+
+.block-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: clamp(32px, 3.2vw, 42px);
+  border-bottom: var(--border) solid var(--cyan-1);
+  background: var(--blue-3);
+  color: var(--cyan-2);
+}
+
+.block-head span {
+  display: block;
+  min-width: 0;
+  padding: clamp(7px, .9vw, 11px) clamp(9px, 1.1vw, 14px);
+  line-height: 1;
+}
+
+.block-body {
+  display: grid;
+  gap: var(--gap);
+  padding: clamp(12px, 1.5vw, 20px);
+}
+
+.console-stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap);
+}
+
+.code {
+  position: relative;
+  overflow: hidden;
+  border: var(--border) solid var(--cyan-1);
+  background: var(--black);
+  box-shadow: clamp(4px, .65vw, 6px) clamp(4px, .65vw, 6px) 0 var(--shadow);
+}
+
+.code pre {
+  overflow: auto;
+  min-height: 100%;
+  padding: clamp(44px, 4.8vw, 58px) clamp(10px, 1.2vw, 16px) clamp(10px, 1.2vw, 16px);
+  color: var(--cyan-2);
+  line-height: 1.22;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code code {
+  display: block;
+}
+
+.code .line {
+  display: block;
+}
+
+.code .tok-cmd {
+  color: var(--yellow);
+}
+
+.code .tok-url {
+  color: #7df9ff;
+}
+
+.code .tok-flag {
+  color: #ffffff;
+}
+
+.code .tok-path {
+  color: #8cff8c;
+}
+
+.code .tok-arg {
+  color: #ff9cff;
+}
+
+.copy {
+  position: absolute;
+  top: clamp(5px, .65vw, 8px);
+  right: clamp(5px, .65vw, 8px);
+  min-height: clamp(28px, 3vw, 36px);
+  padding: 4px clamp(8px, .9vw, 12px);
+  border: var(--border) solid var(--cyan-1);
+  background: var(--blue-3);
+  color: var(--white);
+  font-size: clamp(17px, 1.3vw, 21px);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.copy:hover,
+.copy:focus-visible,
+.copy.is-copied {
+  background: var(--cyan-0);
+  color: var(--black);
+  outline: 0;
+}
+
+.command-table {
+  border: var(--border) solid var(--cyan-1);
+  background: var(--blue-0);
+}
+
+.command-row {
+  display: grid;
+  grid-template-columns: minmax(290px, .55fr) minmax(0, 1fr);
+  min-height: clamp(30px, 3vw, 40px);
+  border-bottom: 1px solid rgba(85,255,255,.55);
+}
+
+.command-row:last-child {
+  border-bottom: 0;
+}
+
+.command-row span {
+  min-width: 0;
+  padding: clamp(6px, .85vw, 10px) clamp(9px, 1vw, 14px);
+  overflow-wrap: anywhere;
+  border-right: 1px solid rgba(85,255,255,.7);
+  color: var(--cyan-2);
+  line-height: 1.18;
+}
+
+.command-row span:last-child {
+  border-right: 0;
+  color: var(--white);
+}
+
+.command-row.is-head span {
+  color: var(--yellow);
+}
+
+.fkeys {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100vw;
+  margin: 0;
+  border-top: var(--border) solid var(--black);
+  background: var(--cyan-0);
+  color: var(--black);
+  box-shadow: 0 -6px 0 var(--shadow);
+}
+
+.fkeys a {
+  display: block;
+  min-height: 3.25rem;
+  padding: .75rem 1rem;
+  border-right: var(--border) solid var(--black);
+  color: var(--black);
+  line-height: 1;
+  text-align: center;
+}
+
+.fkeys a:last-child {
+  border-right: 0;
+}
+
+.fkeys b {
+  color: var(--red);
+  font-weight: 400;
+}
+
+.fkeys a:hover,
+.fkeys a:focus-visible {
+  background: var(--yellow);
+  outline: 0;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --page-pad: 8px;
+    --gap: 10px;
+  }
+
+  html {
+    font-size: 17px;
+  }
+
+  .screen {
+    min-height: auto;
+  }
+
+  .titlebar h1 {
+    font-size: clamp(34px, 12vw, 54px);
+  }
+
+  .lead {
+    font-size: 20px;
+  }
+
+  .command-row {
+    grid-template-columns: 1fr;
+  }
+
+  .command-row span {
+    border-right: 0;
+    border-bottom: 1px solid rgba(85,255,255,.35);
+  }
+
+  .command-row span:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  html {
+    font-size: 16px;
+  }
+
+  .fkeys {
+    grid-template-columns: 1fr;
+  }
+
+  .fkeys a {
+    border-right: 0;
+    border-bottom: var(--border) solid var(--black);
+  }
+
+  .fkeys a:last-child {
+    border-bottom: 0;
+  }
+}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="screen">
+    <div class="layout">
+      <header class="titlebar">
+        <h1>Awful Audit</h1>
+      </header>
+
+      <section class="top-panels" aria-label="Awful Audit preview">
+        <article class="panel" aria-labelledby="about-title">
+          <div class="info-body">
+            <p class="lead">Small audit tool for static front-end projects.</p>
+            <p class="lead">Awful Audit reads a project folder and builds plain text reports for code review, cleanup and AI-assisted analysis.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="block" aria-labelledby="quick-title">
+        <div class="block-head">
+          <span id="quick-title">Quick start</span>
+        </div>
+
+        <div class="block-body">
+          <div class="console-stack">
+            <div class="code">
+              <button class="copy" type="button" data-copy-target="git-code">copy</button>
+              <pre><code id="git-code"><span class="line"><span class="tok-cmd">git</span> <span class="tok-cmd">clone</span> <span class="tok-url">https://github.com/looksawful/awful-audit.git</span></span>
+<span class="line"><span class="tok-cmd">cd</span> <span class="tok-arg">awful-audit</span></span></code></pre>
+            </div>
+
+            <div class="code">
+              <button class="copy" type="button" data-copy-target="install-code">copy</button>
+              <pre><code id="install-code"><span class="line"><span class="tok-cmd">pwsh</span> <span class="tok-flag">-NoProfile</span> <span class="tok-flag">-ExecutionPolicy</span> <span class="tok-arg">Bypass</span> <span class="tok-flag">-File</span> <span class="tok-path">.\powershell\install.ps1</span></span></code></pre>
+            </div>
+          </div>
+
+          <div class="command-table" aria-label="Commands description">
+            <div class="command-row is-head"><span>Command</span><span>Description</span></div>
+            <div class="command-row"><span>git clone https://github.com/looksawful/awful-audit.git</span><span>download the repository</span></div>
+            <div class="command-row"><span>cd awful-audit</span><span>enter the project folder</span></div>
+            <div class="command-row"><span>pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\install.ps1</span><span>install the PowerShell au command</span></div>
+            <div class="command-row"><span>au</span><span>run the default report</span></div>
+            <div class="command-row"><span>au all</span><span>run all reports in order</span></div>
+            <div class="command-row"><span>au full</span><span>collect code, Git state and file inventory</span></div>
+            <div class="command-row"><span>au assets</span><span>collect asset paths, sizes and references</span></div>
+            <div class="command-row"><span>au css</span><span>collect CSS, imports, URLs and class mentions</span></div>
+            <div class="command-row"><span>au html</span><span>collect HTML files</span></div>
+            <div class="command-row"><span>au js</span><span>collect JavaScript and TypeScript files</span></div>
+            <div class="command-row"><span>au cssdist</span><span>collect source CSS and final CSS from dist</span></div>
+            <div class="command-row"><span>au dist</span><span>check built files, sizes and references</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="fkeys" aria-label="Project links">
+    <a href="https://github.com/looksawful/awful-audit"><b>1</b> visit github</a>
+    <a href="https://github.com/looksawful/awful-audit/archive/refs/heads/main.zip"><b>2</b> download zip</a>
+  </footer>
+</main>
+
+<script>
+document.querySelectorAll("[data-copy-target]").forEach((button) => {
+  button.addEventListener("click", async () => {
+    const target = document.getElementById(button.dataset.copyTarget);
+    if (!target) return;
+    const oldText = button.textContent;
+    try {
+      await navigator.clipboard.writeText(target.textContent.trim());
+      button.classList.add("is-copied");
+      button.textContent = "copied";
+      window.setTimeout(() => {
+        button.classList.remove("is-copied");
+        button.textContent = oldText;
+      }, 1000);
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(target);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  });
+});
+</script>
+</body>
 </html>
