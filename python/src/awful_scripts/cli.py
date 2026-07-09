@@ -25,12 +25,6 @@ def choose() -> str:
     return value or "all"
 
 
-def default_output_path(root: Path, mode: str) -> Path:
-    out_dir = root / "_awful-audit"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    return out_dir / f"awful-audit-{mode}.txt"
-
-
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     mode = args.mode or choose()
@@ -46,13 +40,12 @@ def main(argv: list[str] | None = None) -> int:
     if output_path:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(result.text, encoding="utf-8")
+
     if not args.no_clipboard:
-        copied = copy(result.text)
-        if not copied:
-            if output_path is None:
-                output_path = default_output_path(root, result.mode)
-                output_path.write_text(result.text, encoding="utf-8")
-            copy(f"awful-audit report saved: {output_path}")
+        if output_path:
+            copied = copy(f"awful-audit report saved: {output_path}")
+        else:
+            copied = copy(result.text)
 
     if output_path and not args.print:
         print(f"output: {output_path}")
@@ -60,9 +53,13 @@ def main(argv: list[str] | None = None) -> int:
         if args.no_clipboard:
             print("clipboard: disabled")
         else:
-            print("clipboard: full report copied" if copied else "clipboard: output path copied or skipped")
+            print("clipboard: output path copied" if copied else "clipboard: failed")
     else:
         print(result.text)
+        if args.no_clipboard:
+            print("clipboard: disabled")
+        else:
+            print("clipboard: full report copied" if copied else "clipboard: failed")
     return 0
 
 
