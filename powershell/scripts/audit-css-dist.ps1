@@ -1,1 +1,6 @@
-& { $ErrorActionPreference='Continue'; $root=(Resolve-Path -LiteralPath (Get-Location).Path).Path.TrimEnd('\','/'); $skip='[\\/](\.git|node_modules|build|\.next|\.vite|coverage|tmp|temp|\.vercel|\.wrangler)[\\/]'; $sb=[System.Text.StringBuilder]::new(); $files=Get-ChildItem -LiteralPath $root -Recurse -File -Force | Where-Object { $_.FullName -notmatch $skip -and $_.Extension.ToLowerInvariant() -eq '.css' } | Sort-Object FullName; [void]$sb.AppendLine('CSS DIST AUDIT'); [void]$sb.AppendLine('ROOT: ' + $root); foreach($f in $files){ $rel=$f.FullName.Substring($root.Length).TrimStart('\','/'); [void]$sb.AppendLine(''); [void]$sb.AppendLine('FILE: ' + $rel); try { [void]$sb.AppendLine([System.IO.File]::ReadAllText($f.FullName,[System.Text.UTF8Encoding]::new($false))) } catch { [void]$sb.AppendLine('READ ERROR: ' + $_.Exception.Message) } }; $result=$sb.ToString(); try { Set-Clipboard -Value $result } catch {}; Write-Host ('copied chars: ' + $result.Length); Write-Host ('css files copied: ' + $files.Count) }
+param([switch]$NoClipboard, [string]$Output, [string]$Root)
+$ErrorActionPreference = 'Continue'
+. (Join-Path $PSScriptRoot '_audit-lib.ps1')
+if ([string]::IsNullOrWhiteSpace($Root)) { $Root = (Get-Location).Path }
+$result = Invoke-AwfulAudit -Mode 'cssdist' -Root $Root
+Complete-AwfulAudit -Result $result -NoClipboard:$NoClipboard -Output $Output
