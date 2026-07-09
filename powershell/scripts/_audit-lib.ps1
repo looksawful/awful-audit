@@ -361,11 +361,6 @@ function Complete-AwfulAudit {
     $parent = Split-Path -Parent $outPath
     if ($parent) { New-Item -ItemType Directory -Force -Path $parent | Out-Null }
     Set-Content -LiteralPath $outPath -Encoding utf8NoBOM -Value $text
-  } elseif ($text.Length -gt (Get-AwfulMaxClipboardChars)) {
-    $dir = Join-Path $Result.Root '_awful-audit'
-    New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    $outPath = Join-Path $dir ('awful-audit-' + $Result.Mode + '-' + (Get-Date -Format 'yyyyMMdd-HHmmss') + '.txt')
-    Set-Content -LiteralPath $outPath -Encoding utf8NoBOM -Value $text
   }
 
   if (-not $NoClipboard) {
