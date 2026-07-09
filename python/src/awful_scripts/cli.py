@@ -57,7 +57,10 @@ def main(argv: list[str] | None = None) -> int:
     if output_path and not args.print:
         print(f"output: {output_path}")
         print(f"chars: {len(result.text)}")
-        print("clipboard: full report copied" if copied else "clipboard: output path copied or skipped")
+        if args.no_clipboard:
+            print("clipboard: disabled")
+        else:
+            print("clipboard: full report copied" if copied else "clipboard: output path copied or skipped")
     else:
         print(result.text)
     return 0
