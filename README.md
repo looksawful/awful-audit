@@ -65,7 +65,7 @@ Create a ZIP directly from the in-memory report without creating a standalone te
     au all -Zip
     au all -ArchivePath _awful-audit\custom-audit.zip
 
-`-ArchivePath` implies `-Archive`. Unless `-NoClipboard` is used, the generated ZIP is copied to the Windows clipboard as a file and can be pasted into Explorer, a browser upload field or a messenger.
+`-ArchivePath` implies `-Archive`. Unless `-NoClipboard` is used, the generated ZIP is copied to the Windows clipboard as a file and can be pasted into Explorer or applications that accept pasted files.
 
 Run without installing:
 
