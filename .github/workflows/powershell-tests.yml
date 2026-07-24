@@ -3,7 +3,7 @@ name: PowerShell tests
 on:
   push:
     branches:
-      - feature/archive-report-clipboard
+      - main
   pull_request:
   workflow_dispatch:
 
