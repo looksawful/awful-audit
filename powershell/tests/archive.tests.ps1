@@ -7,7 +7,25 @@ function Assert-Awful {
 }
 
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$auditHtml = Join-Path $repoRoot 'powershell\scripts\audit-html.ps1'
+$scriptsRoot = Join-Path $repoRoot 'powershell\scripts'
+$auditHtml = Join-Path $scriptsRoot 'audit-html.ps1'
+$modeScripts = @(
+  'audit-all.ps1',
+  'audit-full.ps1',
+  'audit-assets.ps1',
+  'audit-css.ps1',
+  'audit-html.ps1',
+  'audit-js.ps1',
+  'audit-css-dist.ps1',
+  'audit-dist.ps1'
+)
+
+foreach ($scriptName in $modeScripts) {
+  $command = Get-Command (Join-Path $scriptsRoot $scriptName)
+  Assert-Awful ($command.Parameters.ContainsKey('Archive')) ($scriptName + ' has no Archive parameter')
+  Assert-Awful ($command.Parameters.ContainsKey('ArchivePath')) ($scriptName + ' has no ArchivePath parameter')
+  Assert-Awful ($command.Parameters['Archive'].Aliases -contains 'Zip') ($scriptName + ' has no Zip alias')
+}
 
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('awful-audit-tests-' + [guid]::NewGuid().ToString('N'))
 $projectRoot = Join-Path $tempRoot 'project'
@@ -15,6 +33,11 @@ New-Item -ItemType Directory -Force -Path $projectRoot | Out-Null
 Set-Content -LiteralPath (Join-Path $projectRoot 'index.html') -Encoding utf8NoBOM -Value '<main class="test">archive test</main>'
 
 try {
+  $legacyOutput = Join-Path $projectRoot 'reports\legacy-output.txt'
+  & $auditHtml -Root $projectRoot -Output $legacyOutput -NoClipboard
+  Assert-Awful (Test-Path -LiteralPath $legacyOutput -PathType Leaf) 'legacy Output mode no longer creates a text file'
+  Assert-Awful ((Get-Content -LiteralPath $legacyOutput -Raw).Contains('archive test')) 'legacy Output report is incomplete'
+
   & $auditHtml -Root $projectRoot -Archive -NoClipboard
 
   $defaultArchive = Join-Path $projectRoot '_awful-audit\audit-html.zip'
@@ -33,6 +56,10 @@ try {
   } finally {
     $zip.Dispose()
   }
+
+  Remove-Item -LiteralPath $defaultArchive -Force
+  & $auditHtml -Root $projectRoot -Zip -NoClipboard
+  Assert-Awful (Test-Path -LiteralPath $defaultArchive -PathType Leaf) 'Zip alias does not create an archive'
 
   $customArchive = Join-Path $projectRoot 'reports\custom-report.zip'
   & $auditHtml -Root $projectRoot -ArchivePath $customArchive -NoClipboard
