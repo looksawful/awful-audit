@@ -55,6 +55,18 @@ Run from any project folder:
     au cssdist
     au dist
 
+Save a standalone text report:
+
+    au all -Output _awful-audit\audit-all.txt -NoClipboard
+
+Create a ZIP directly from the in-memory report without creating a standalone text file:
+
+    au all -Archive
+    au all -Zip
+    au all -ArchivePath _awful-audit\custom-audit.zip
+
+`-ArchivePath` implies `-Archive`. Unless `-NoClipboard` is used, the generated ZIP is copied to the Windows clipboard as a file and can be pasted into Explorer, a browser upload field or a messenger.
+
 Run without installing:
 
     pwsh -NoProfile -ExecutionPolicy Bypass -File .\powershell\scripts\au.ps1 all
@@ -143,4 +155,3 @@ MIT.
 Ivan Krushinsky / looksawful
 
 https://looksawful.ru
-
