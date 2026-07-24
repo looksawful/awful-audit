@@ -16,3 +16,6 @@ jobs:
       - name: Run archive tests
         shell: pwsh
         run: ./powershell/tests/archive.tests.ps1
+      - name: Run installer tests
+        shell: pwsh
+        run: ./powershell/tests/install.tests.ps1
