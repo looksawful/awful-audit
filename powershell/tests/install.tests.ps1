@@ -25,7 +25,7 @@ $profileBackups = foreach ($profilePath in $profiles) {
     Content = if (Test-Path -LiteralPath $profilePath -PathType Leaf) { Get-Content -LiteralPath $profilePath -Raw } else { $null }
   }
 }
-$sentinel = '# awful-audit uninstall test sentinel ' + [guid]::NewGuid().ToString('N')
+$sentinel = '# uninstall test sentinel ' + [guid]::NewGuid().ToString('N')
 
 try {
   foreach ($profilePath in $profiles) {
