@@ -28,7 +28,7 @@ foreach ($profilePath in $profiles) {
   }
 }
 
-Remove-Item Function:\global:au -Force -ErrorAction SilentlyContinue
-Remove-Item Function:\global:ау -Force -ErrorAction SilentlyContinue
+Remove-Item Function:\au -Force -ErrorAction SilentlyContinue
+Remove-Item Function:\ау -Force -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath $InstallDir -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host 'removed:' $InstallDir
