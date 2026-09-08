@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from .audits import MODES, run
@@ -29,6 +30,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     mode = args.mode or choose()
     root = Path(args.root).resolve()
+    if not root.is_dir():
+        print(f"error: root is not a directory: {root}", file=sys.stderr)
+        return 2
     if mode == "gui":
         gui_main(root)
         return 0
