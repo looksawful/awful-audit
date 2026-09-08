@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import contextlib
 import io
+import subprocess
+import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -105,6 +108,50 @@ class CliCharacterizationTests(unittest.TestCase):
             self.assertIn(str(root_file), stderr.getvalue())
             self.assertNotIn("FULL PROJECT AUDIT", stdout.getvalue())
             self.assertFalse(output.exists())
+
+    def test_cli_import_does_not_require_tkinter(self) -> None:
+        script = textwrap.dedent(
+            """
+            import builtins
+
+            real_import = builtins.__import__
+
+            def blocked_import(name, *args, **kwargs):
+                if name == "tkinter" or name.startswith("tkinter."):
+                    raise ImportError("simulated tkinter unavailable")
+                return real_import(name, *args, **kwargs)
+
+            builtins.__import__ = blocked_import
+            import awful_scripts.cli
+            print("cli import ok")
+            """
+        )
+        result = subprocess.run([sys.executable, "-c", script], text=True, capture_output=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("cli import ok", result.stdout)
+
+    def test_gui_mode_reports_missing_tkinter_only_when_selected(self) -> None:
+        script = textwrap.dedent(
+            """
+            import builtins
+
+            real_import = builtins.__import__
+
+            def blocked_import(name, *args, **kwargs):
+                if name == "tkinter" or name.startswith("tkinter."):
+                    raise ImportError("simulated tkinter unavailable")
+                return real_import(name, *args, **kwargs)
+
+            builtins.__import__ = blocked_import
+            from awful_scripts.cli import main
+            raise SystemExit(main(["gui", "--root", "."]))
+            """
+        )
+        result = subprocess.run([sys.executable, "-c", script], text=True, capture_output=True, check=False)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("gui", result.stderr.lower())
+        self.assertIn("tkinter", result.stderr.lower())
+        self.assertNotIn("traceback", result.stderr.lower())
 
 
 if __name__ == "__main__":

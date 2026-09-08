@@ -6,7 +6,6 @@ from pathlib import Path
 
 from .audits import MODES, run
 from .clipboard import copy
-from .gui import main as gui_main
 
 
 def parser() -> argparse.ArgumentParser:
@@ -34,6 +33,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: root is not a directory: {root}", file=sys.stderr)
         return 2
     if mode == "gui":
+        try:
+            from .gui import main as gui_main
+        except ImportError as exc:
+            print(f"error: gui requires Tkinter: {exc}", file=sys.stderr)
+            return 2
         gui_main(root)
         return 0
 
