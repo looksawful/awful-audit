@@ -5,7 +5,7 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext
 
-from .audits import MODES, run
+from .audits import MODES, max_clipboard_chars, run
 from .clipboard import copy
 
 
@@ -38,13 +38,20 @@ def main(root_path: Path | None = None) -> None:
         def worker() -> None:
             try:
                 result = run(mode, root)
-                copied = copy(result.text)
+                too_large = len(result.text) > max_clipboard_chars()
+                copied = False if too_large else copy(result.text)
 
                 def done() -> None:
                     output.delete("1.0", tk.END)
                     output.insert(tk.END, result.text)
                     set_busy(False)
-                    messagebox.showinfo("awful-audit", "Report copied." if copied else "Report built. Clipboard skipped because the report is large or unavailable.")
+                    if too_large:
+                        message = "Report built. Clipboard skipped because the report is too large."
+                    elif copied:
+                        message = "Report copied."
+                    else:
+                        message = "Report built. Clipboard unavailable."
+                    messagebox.showinfo("awful-audit", message)
 
                 window.after(0, done)
             except Exception as exc:
