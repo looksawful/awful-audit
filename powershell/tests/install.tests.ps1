@@ -8,6 +8,7 @@ function Assert-Awful {
 
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $installer = Join-Path $repoRoot 'powershell\install.ps1'
+$uninstaller = Join-Path $repoRoot 'powershell\uninstall.ps1'
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('awful-audit-install-tests-' + [guid]::NewGuid().ToString('N'))
 $installDir = Join-Path $tempRoot 'installed'
 $projectRoot = Join-Path $tempRoot 'project'
@@ -24,8 +25,16 @@ $profileBackups = foreach ($profilePath in $profiles) {
     Content = if (Test-Path -LiteralPath $profilePath -PathType Leaf) { Get-Content -LiteralPath $profilePath -Raw } else { $null }
   }
 }
+$sentinel = '# awful-audit uninstall test sentinel ' + [guid]::NewGuid().ToString('N')
 
 try {
+  foreach ($profilePath in $profiles) {
+    $profileDir = Split-Path -Parent $profilePath
+    if ($profileDir) { New-Item -ItemType Directory -Force -Path $profileDir | Out-Null }
+    if (-not (Test-Path -LiteralPath $profilePath)) { New-Item -ItemType File -Force -Path $profilePath | Out-Null }
+    Add-Content -LiteralPath $profilePath -Encoding utf8NoBOM -Value $sentinel
+  }
+
   & $installer -InstallDir $installDir
 
   $auCommand = Get-Command au -CommandType Function -ErrorAction Stop
@@ -41,7 +50,23 @@ try {
   ау html -Root $projectRoot -Output $textPath -NoClipboard
   Assert-Awful (Test-Path -LiteralPath $textPath -PathType Leaf) 'ау cannot run immediately after installation'
 
-  Write-Host 'install tests: passed'
+  & $uninstaller -InstallDir $installDir
+
+  Assert-Awful (-not (Test-Path -LiteralPath $installDir)) 'uninstall did not remove the install directory'
+  $userPathAfterUninstall = [Environment]::GetEnvironmentVariable('Path', 'User')
+  $remainingPathParts = @($userPathAfterUninstall -split ';' | Where-Object { $_ -ne '' })
+  Assert-Awful (-not ($remainingPathParts | Where-Object { $_.TrimEnd('\') -ieq $installDir.TrimEnd('\') })) 'uninstall left the install directory in user PATH'
+  Assert-Awful ($null -eq (Get-Command au -CommandType Function -ErrorAction SilentlyContinue)) 'uninstall left the current-session au function behind'
+  Assert-Awful ($null -eq (Get-Command ау -CommandType Function -ErrorAction SilentlyContinue)) 'uninstall left the current-session ау function behind'
+
+  foreach ($profilePath in $profiles) {
+    $profileText = if (Test-Path -LiteralPath $profilePath -PathType Leaf) { Get-Content -LiteralPath $profilePath -Raw } else { '' }
+    Assert-Awful ($profileText.Contains($sentinel)) ('uninstall removed unrelated profile content: ' + $profilePath)
+    Assert-Awful (-not $profileText.Contains('# awful-audit')) ('uninstall left the awful-audit profile block behind: ' + $profilePath)
+  }
+
+  & $uninstaller -InstallDir $installDir
+  Write-Host 'install lifecycle tests: passed'
 } finally {
   Remove-Item Function:\au -Force -ErrorAction SilentlyContinue
   Remove-Item Function:\ау -Force -ErrorAction SilentlyContinue
