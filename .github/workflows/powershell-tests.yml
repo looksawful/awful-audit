@@ -19,3 +19,6 @@ jobs:
       - name: Run installer tests
         shell: pwsh
         run: ./powershell/tests/install.tests.ps1
+      - name: Run clipboard policy tests
+        shell: pwsh
+        run: ./powershell/tests/clipboard.tests.ps1
