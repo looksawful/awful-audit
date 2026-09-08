@@ -178,7 +178,7 @@ def files(root: Path, include_root_dist: bool = False, only_root_dist: bool = Fa
         for dirname in dirnames:
             child = current / dirname
             is_root_dist = dirname.lower() == "dist" and child.resolve() == root_dist
-            if dirname in SKIP_DIRS and not (include_root_dist and is_root_dist):
+            if dirname.lower() in SKIP_DIRS and not (include_root_dist and is_root_dist):
                 continue
             kept.append(dirname)
         dirnames[:] = kept
