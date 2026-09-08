@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from .audits import MODES, run
+from .audits import MODES, max_clipboard_chars, run
 from .clipboard import copy
 
 
@@ -44,6 +44,7 @@ def main(argv: list[str] | None = None) -> int:
     result = run(mode, root)
     output_path = Path(args.output).resolve() if args.output else None
     copied = False
+    clipboard_skipped = False
 
     if output_path:
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -52,6 +53,8 @@ def main(argv: list[str] | None = None) -> int:
     if not args.no_clipboard:
         if output_path:
             copied = copy(f"awful-audit report saved: {output_path}")
+        elif len(result.text) > max_clipboard_chars():
+            clipboard_skipped = True
         else:
             copied = copy(result.text)
 
@@ -66,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
         print(result.text)
         if args.no_clipboard:
             print("clipboard: disabled")
+        elif clipboard_skipped:
+            print("clipboard: skipped (report too large)")
         else:
             print("clipboard: full report copied" if copied else "clipboard: failed")
     return 0
