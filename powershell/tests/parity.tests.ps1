@@ -26,8 +26,8 @@ function Invoke-Pair {
   $psOut = Join-Path $tempRoot ($Mode + '-powershell.txt')
   $pyOut = Join-Path $tempRoot ($Mode + '-python.txt')
   $wrapperName = if ($Mode -eq 'cssdist') { 'audit-css-dist.ps1' } else { 'audit-' + $Mode + '.ps1' }
-  & (Join-Path $scriptsRoot $wrapperName) -Root $projectRoot -Output $psOut -NoClipboard
-  & python -m awful_scripts $Mode --root $projectRoot --output $pyOut --no-clipboard
+  & (Join-Path $scriptsRoot $wrapperName) -Root $projectRoot -Output $psOut -NoClipboard | Out-Null
+  & python -m awful_scripts $Mode --root $projectRoot --output $pyOut --no-clipboard | Out-Null
   if ($LASTEXITCODE -ne 0) { throw ('Python audit failed for mode: ' + $Mode) }
   return [pscustomobject]@{
     PowerShell = Get-Content -LiteralPath $psOut -Raw
