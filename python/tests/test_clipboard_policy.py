@@ -33,7 +33,7 @@ class ClipboardPolicyTests(unittest.TestCase):
                     os.environ["AWFUL_AUDIT_MAX_CLIPBOARD_MB"] = old_limit
 
             self.assertEqual(code, 0)
-            copy_mock.assert_not_called()
+            self.assertEqual(copy_mock.call_count, 0)
             self.assertIn("clipboard: skipped (report too large)", stdout.getvalue())
 
     def test_output_path_mode_copies_path_even_when_report_is_large(self) -> None:
