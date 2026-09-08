@@ -8,6 +8,7 @@ function Assert-Awful {
 
 $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 . (Join-Path $repoRoot 'powershell\scripts\_audit-lib.ps1')
+. (Join-Path $repoRoot 'powershell\scripts\_archive-lib.ps1')
 
 $script:ClipboardCalls = [System.Collections.Generic.List[string]]::new()
 function Set-Clipboard {
@@ -25,13 +26,13 @@ try {
   $result = [pscustomobject]@{ Mode = 'full'; Root = $tempRoot; Text = $largeText }
 
   $script:ClipboardCalls.Clear()
-  $messages = (& { Complete-AwfulAudit -Result $result } 6>&1 | Out-String)
+  $messages = (& { Complete-AwfulAuditOutput -Result $result } 6>&1 | Out-String)
   Assert-Awful ($script:ClipboardCalls.Count -eq 0) 'oversized full report was sent to text clipboard'
   Assert-Awful ($messages.Contains('clipboard: skipped (report too large)')) 'oversized clipboard skip reason was not reported'
 
   $outputPath = Join-Path $tempRoot 'report.txt'
   $script:ClipboardCalls.Clear()
-  $messages = (& { Complete-AwfulAudit -Result $result -Output $outputPath } 6>&1 | Out-String)
+  $messages = (& { Complete-AwfulAuditOutput -Result $result -Output $outputPath } 6>&1 | Out-String)
   Assert-Awful (Test-Path -LiteralPath $outputPath -PathType Leaf) 'output mode did not write the large report'
   Assert-Awful ($script:ClipboardCalls.Count -eq 1) 'output mode did not copy the saved-path message'
   Assert-Awful ($script:ClipboardCalls[0] -eq ('awful-audit report saved: ' + $outputPath)) 'output mode copied unexpected clipboard text'
