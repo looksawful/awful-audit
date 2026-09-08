@@ -56,6 +56,18 @@ class AuditCharacterizationTests(unittest.TestCase):
             self.assertNotIn("dist/bundle.css", paths)
             self.assertIn("src/app.ts", paths)
 
+    def test_source_index_skips_mixed_case_generated_directories(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self.make_project(root)
+            (root / "NODE_MODULES" / "pkg").mkdir(parents=True)
+            (root / "NODE_MODULES" / "pkg" / "ignored-upper.js").write_text("ignored", encoding="utf-8")
+            (root / "src" / "Dist").mkdir()
+            (root / "src" / "Dist" / "generated.js").write_text("generated", encoding="utf-8")
+            paths = [path.relative_to(root).as_posix() for path in index(root).files]
+            self.assertNotIn("NODE_MODULES/pkg/ignored-upper.js", paths)
+            self.assertNotIn("src/Dist/generated.js", paths)
+
     def test_cssdist_includes_source_and_root_dist_css(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

@@ -13,13 +13,15 @@ $projectRoot = Join-Path $tempRoot 'project'
 New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'src') | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'public') | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'dist') | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'node_modules\pkg') | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'NODE_MODULES\pkg') | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $projectRoot 'src\Dist') | Out-Null
 Set-Content -LiteralPath (Join-Path $projectRoot 'index.html') -Encoding utf8NoBOM -Value '<main class="hero"><img src="public/hero.webp"></main>'
 Set-Content -LiteralPath (Join-Path $projectRoot 'src\app.ts') -Encoding utf8NoBOM -Value 'document.querySelector(".hero")?.classList.add("ready")'
 Set-Content -LiteralPath (Join-Path $projectRoot 'src\style.css') -Encoding utf8NoBOM -Value '.hero{background:url("../public/hero.webp")}'
 Set-Content -LiteralPath (Join-Path $projectRoot 'public\hero.webp') -Encoding utf8NoBOM -Value 'asset'
 Set-Content -LiteralPath (Join-Path $projectRoot 'dist\bundle.css') -Encoding utf8NoBOM -Value '.hero{}'
-Set-Content -LiteralPath (Join-Path $projectRoot 'node_modules\pkg\ignored.js') -Encoding utf8NoBOM -Value 'ignored'
+Set-Content -LiteralPath (Join-Path $projectRoot 'NODE_MODULES\pkg\ignored.js') -Encoding utf8NoBOM -Value 'ignored'
+Set-Content -LiteralPath (Join-Path $projectRoot 'src\Dist\generated.js') -Encoding utf8NoBOM -Value 'generated'
 
 function Invoke-Pair {
   param([string]$Mode)
@@ -40,7 +42,8 @@ try {
   foreach ($text in @($full.PowerShell, $full.Python)) {
     Assert-Awful ($text.Contains('FULL PROJECT AUDIT')) 'full heading drifted'
     Assert-Awful ($text.Contains('src/app.ts')) 'source TypeScript missing from full report'
-    Assert-Awful (-not $text.Contains('node_modules/pkg/ignored.js')) 'node_modules leaked into full report'
+    Assert-Awful (-not $text.Contains('NODE_MODULES/pkg/ignored.js')) 'mixed-case node_modules leaked into full report'
+    Assert-Awful (-not $text.Contains('src/Dist/generated.js')) 'mixed-case generated directory leaked into full report'
     Assert-Awful (-not $text.Contains('dist/bundle.css')) 'root dist leaked into full source report'
   }
 
