@@ -103,6 +103,11 @@ function Complete-AwfulAuditOutput {
 
   $archiveRequested = $Archive -or -not [string]::IsNullOrWhiteSpace($ArchivePath)
   if (-not $archiveRequested) {
+    if (-not $NoClipboard -and [string]::IsNullOrWhiteSpace($Output) -and ([string]$Result.Text).Length -gt (Get-AwfulMaxClipboardChars)) {
+      Write-Host 'clipboard: skipped (report too large)'
+      Write-Host ('chars: ' + ([string]$Result.Text).Length)
+      return
+    }
     Complete-AwfulAudit -Result $Result -NoClipboard:$NoClipboard -Output $Output
     return
   }
