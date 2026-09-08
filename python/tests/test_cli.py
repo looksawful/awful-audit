@@ -59,6 +59,53 @@ class CliCharacterizationTests(unittest.TestCase):
             self.assertIn("HTML AUDIT", stdout.getvalue())
             self.assertTrue(output.is_file())
 
+    def test_missing_root_fails_without_report_or_output_file(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            missing = Path(td) / "does-not-exist"
+            output = Path(td) / "missing-root.txt"
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                code = main(
+                    [
+                        "full",
+                        "--root",
+                        str(missing),
+                        "--output",
+                        str(output),
+                        "--no-clipboard",
+                    ]
+                )
+            self.assertNotEqual(code, 0)
+            self.assertIn("root", stderr.getvalue().lower())
+            self.assertIn(str(missing), stderr.getvalue())
+            self.assertNotIn("FULL PROJECT AUDIT", stdout.getvalue())
+            self.assertFalse(output.exists())
+
+    def test_file_root_fails_without_report_or_output_file(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root_file = Path(td) / "not-a-directory.txt"
+            root_file.write_text("not a project directory", encoding="utf-8")
+            output = Path(td) / "file-root.txt"
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                code = main(
+                    [
+                        "full",
+                        "--root",
+                        str(root_file),
+                        "--output",
+                        str(output),
+                        "--no-clipboard",
+                    ]
+                )
+            self.assertNotEqual(code, 0)
+            self.assertIn("root", stderr.getvalue().lower())
+            self.assertIn(str(root_file), stderr.getvalue())
+            self.assertNotIn("FULL PROJECT AUDIT", stdout.getvalue())
+            self.assertFalse(output.exists())
+
 
 if __name__ == "__main__":
     unittest.main()
