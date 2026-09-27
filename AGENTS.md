@@ -65,11 +65,11 @@ Use only when the task matches their scope:
 
 ### Issue tracker
 
-GitHub Issues for this repository. See `docs/agents/issue-tracker.md`.
+Issue tracker is configured for this repository. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Default Matt triage vocabulary. See `docs/agents/triage-labels.md`.
+Triage vocabulary is configured in `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
