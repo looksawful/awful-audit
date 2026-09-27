@@ -60,3 +60,17 @@ Use only when the task matches their scope:
 - `.agents/skills/audit-contract/SKILL.md` for shared scanner/report behavior.
 - `.agents/skills/python-cli/SKILL.md` for Python CLI, packaging, clipboard, or GUI-boundary work.
 - `.agents/skills/powershell-installer/SKILL.md` for Windows install/uninstall, `au`, profiles, PATH, archive, or file clipboard work.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues for this repository. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default Matt triage vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout. See `docs/agents/domain.md`.
