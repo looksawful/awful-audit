@@ -1,12 +1,14 @@
 # awful-audit
 
+> **DISCONTINUED (2026-11-20).** This project is preserved for reference only. No further maintenance, releases, support or installation are planned. See [project closure](PROJECT_CLOSURE.md). The installation instructions below are historical and should not be treated as a recommendation to install.
+
 [Website](https://looksawful.github.io/awful-audit/) · [Download ZIP](https://github.com/looksawful/awful-audit/archive/refs/heads/main.zip) · [looksawful.ru](https://looksawful.ru)
 
 Small audit tool for static front-end projects.
 
 Awful Audit reads a project folder and builds plain text reports for code review, cleanup and AI-assisted analysis.
 
-Beta: it works, but report formats and installers may still change.
+Historical beta snapshot; no further updates are planned.
 
 ## Versions
 
