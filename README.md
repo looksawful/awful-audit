@@ -2,7 +2,7 @@
 
 > **DISCONTINUED (2026-11-20).** This project is preserved for reference only. No further maintenance, releases, support or installation are planned. See [project closure](PROJECT_CLOSURE.md). The installation instructions below are historical and should not be treated as a recommendation to install.
 
-[Website](https://looksawful.github.io/awful-audit/) · [Download ZIP](https://github.com/looksawful/awful-audit/archive/refs/heads/main.zip) · [looksawful.ru](https://looksawful.ru)
+[looksawful.ru](https://looksawful.ru)
 
 Small audit tool for static front-end projects.
 
@@ -195,7 +195,7 @@ PowerShell on Windows with PowerShell 7+:
     ./powershell/tests/clipboard.tests.ps1
     ./powershell/tests/parity.tests.ps1
 
-GitHub Actions runs Python characterization on CPython 3.10–3.13 and checks PowerShell/Python semantic parity on Windows.
+Historically, GitHub Actions ran Python characterization on CPython 3.10–3.13 and checked PowerShell/Python semantic parity on Windows. Actions were disabled on 2026-11-20.
 
 ## License
 
