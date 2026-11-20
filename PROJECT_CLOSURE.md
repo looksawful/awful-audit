@@ -17,11 +17,11 @@ Reuse individual ideas or code only when another active project demonstrates a c
 
 ## Closure checklist
 - [x] Document decision in repository.
-- [ ] Update README with discontinued status.
-- [ ] Unpublish GitHub Pages and remove public installation promotion.
-- [ ] Disable unnecessary Actions workflows.
-- [ ] Archive GitHub repository (read-only).
-- [ ] Verify no active external tasks remain; update Asana record.
+- [x] Update README with discontinued status.
+- [x] Unpublish GitHub Pages and remove public installation promotion (REST status: `has_pages=false`).
+- [x] Disable GitHub Actions (REST permissions: `enabled=false`).
+- [x] Archive GitHub repository (read-only; final administrative action of this closure).
+- [x] Verify 0 open GitHub issues and update existing completed Asana task. Separate Awful Post remains active.
 
 ## Reopening criteria
 Reopen only with a named user, a specific unmet use case, and an owner willing to maintain it.
